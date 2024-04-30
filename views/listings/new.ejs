@@ -1,0 +1,45 @@
+
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-3"> <!--Here we are using row class for div. It converts entire body as row-->
+    <div class="col-8 offset-2"> <!-- As the entire body becomes single row,we are dividing that row into 8 columns(so that the form width decreases)-->
+        <!--& adding offset-2 because the form should move 2 rows from left.So that form settle in the Middle -->
+        <h3> Create a New listing</h3>
+        <form method = "POST" action = "/listings" novalidate class="needs-validation">
+            <div class = "mb-3">
+                <label for = "title" class = "form-label">Title</label>
+                <input name = "listing[title]" placeholder="Add a catchy Title" type = "text" class = "form-control" required>
+                <div class = "valid-feedback">Title looks good!</div> <!-- This is bootstrap class, It displays on valid feedback-->
+            </div>
+            <!-- The above we use listing[title, etc.....]  because while extracting data in app.js it become easier-->
+            <div class = "mb-3">
+                <label for = "description" class = "form-label">Description</label>
+                <textarea name = "listing[description]"  class = "form-control"  required></textarea>
+                <div class = "invalid-feedback">Please add short description</div> <!-- This is bootstrap class, It displays on invalid feedback-->
+            </div>
+            <div class = "mb-3">
+                <label for = "image" class = "form-label">Image Link</label>
+                <input name = "listing[image]" placeholder="enter image/URL" type = "text" class = "form-control" >
+            </div>
+            <div class="row"> <!-- We adding price & Country in a single row-->
+                <div class = "mb-3 col-md-4">
+                    <label for = "price" class = "form-label">Price</label>
+                    <input name = "listing[price]" placeholder="1200"  class = "form-control" required>
+                    <div class = "invalid-feedback">Price should be valid</div>
+                </div>
+                <div class = "mb-3 col-md-8" >
+                    <label for = "country" class = "form-label">Country</label>
+                    <input name = "listing[country]" placeholder="India" type = "text" class = "form-control" required>
+                    <div class = "invalid-feedback">Country should be valid</div>
+                </div>
+            </div>
+            <div class = "mb-3">
+            <label for = "location" class = "form-label">Location</label>
+            <input name = "listing[location]" placeholder="Hyderabad,Telangana" type = "text" class = "form-control" required>
+            <div class = "invalid-feedback">Location should be valid</div>
+        </div> 
+            
+            <button class = "btn btn-dark add-btn mt-3 mb-5">add</button>
+        
+        </form>
+    </div>
+</div>
