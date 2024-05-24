@@ -8,26 +8,29 @@
     <div class="card col-6 offset-3 show-card listing-card">
         <img src="<%= listing.image %>" class="card-img-top show-img" alt="listing_image">
         <div class="card-body">
-            <p class="card-text">
-                <%= listing.description %> <br>
-                &#8377; <%= listing.price.toLocaleString("en-IN") %> <br>
-                <%= listing.location %> <br>
-                <%= listing.country %>
-            </p>
+            <p class="card-text">Owned by : <i> <%= listing.owner.username %> </i> </p>
+            <p class="card-text"> <%= listing.description %> </p> 
+            <p class="card-text"> &#8377; <%= listing.price.toLocaleString("en-IN") %> </p>
+            <p class="card-text"> <%= listing.location %> </p>
+            <p class="card-text"> <%= listing.country %> </p>
         </div>
     </div>
     <br>
 
+    <!--The current user should exist and the current user = listing owner (then only show edit & delete button) -->
+    <% if(currUser && listing.owner._id.equals(currUser._id)) { %>  
+        <div class="btns">
+            <a href = "/listings/<%= listing._id %>/edit" class = "btn btn-dark col-1 offset-3 edit-btn">Edit </a>
+            <form method = "POST" action = "/listings/<%= listing.id %>?_method=DELETE">
+                <button class = "btn btn-dark offset-5 ">Delete</button>
+            </form>
+        </div>
+    <% } %>
 
-    <div class="btns">
-        <a href = "/listings/<%= listing._id %>/edit" class = "btn btn-dark col-1 offset-3 edit-btn">Edit </a>
-        <form method = "POST" action = "/listings/<%= listing.id %>?_method=DELETE">
-            <button class = "btn btn-dark offset-5 ">Delete</button>
-        </form>
-    </div>
-
+    
     <div class="col-8 offset-3 mb-3">
         <hr>
+    <% if(currUser) { %>
         <h4>Leave a Review</h4>
         <form action="/listings/<%= listing._id %>/reviews" method = "POST" novalidate class = "needs-validation">
             <div class = "mb-3 mt-3">
@@ -41,7 +44,9 @@
             </div>
             <button class = "btn btn-outline-dark">Submit</button>
         </form>
-        <hr>
+        <hr> 
+    <% } %>
+        
         <p><b>All Reviews</b></p>
         <div class="row">
             <% for(review of listing.reviews) { %>
