@@ -6,35 +6,17 @@ const ExpressError = require("../utils/ExpressError.js"); // To require Express 
 
 const Review = require("../models/review.js"); // To require review schema
 const Listing = require("../models/listing.js");
-const {validateReview,isLoggedIn} = require("../middleware.js");
-
+const {validateReview,isLoggedIn, isReviewAuthor} = require("../middleware.js");
+const reviewController = require("../controllers/reviews.js");
 
 
 // Reviews
 // Post reviews route
 
-router.post("/",isLoggedIn,validateReview, wrapAsync (async(req,res) => { // / we are making this as "/"
-    let listing =  await Listing.findById(req.params.id); //with this we can find the listing to add review
-    let newReview = new Review(req.body.review); //we are taking the review from input & store it newReview
-    newReview.author = req.user._id; //The author must be the current user
-    console.log(newReview);
-    listing.reviews.push(newReview); //we are adding the review to listing
-
-    await newReview.save(); //saving reviews
-    await listing.save();
-    req.flash("success", "New Review Created");
-    res.redirect(`/listings/${listing._id}`);
-}));
+router.post("/",isLoggedIn,validateReview, wrapAsync (reviewController.createReview));
 
 //Delete Reviews Route
 
-router.delete("/:reviewId", wrapAsync(async(req,res) => {
-    let { id, reviewId } = req.params;
-
-    await Listing.findByIdAndUpdate(id,{$pull:{reviews: reviewId}}); //With the pull operator,in reviews array of a listing, the id that matches review Id will be deleted
-    await Review.findByIdAndDelete(reviewId);
-    req.flash("success", "Review deleted");
-    res.redirect(`/listings/${id}`);
-}));
+router.delete("/:reviewId",isLoggedIn,isReviewAuthor, wrapAsync(reviewController.destroyReview));
 
 module.exports = router;

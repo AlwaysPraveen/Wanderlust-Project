@@ -1,8 +1,12 @@
+if(process.env.NODE_ENV != "production") {
+    require('dotenv').config(); //We use dotenv only in development .When it is in Production we never use this 
+}
+
 const express = require("express");
 const app = express();
 
 const mongoose = require('mongoose');
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+//const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 const path = require("path");
 
@@ -15,6 +19,7 @@ const { listingSchema ,reviewSchema } = require("./schema.js"); //To require JOI
 const Review = require("./models/review.js"); // To require review schema
 
 const session = require("express-session"); //To require express-session package
+const MongoStore = require('connect-mongo'); //To require connect-mongo , which is used to store session data in cloud for deployement (we previously used express-session , which stores session data in local storage)
 const flash = require("connect-flash"); //To connect flash
 
 const passport = require("passport"); //To require passport
@@ -25,13 +30,14 @@ const listingRouter = require("./routes/listing.js"); // To require listing rout
 const reviewRouter = require("./routes/review.js"); //To require review routes
 const userRouter = require("./routes/user.js"); //To require user routes
 
+const dbUrl = process.env.ATLASDB_URL;
 
 main().then(() => {
     console.log("connected");
 }).catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 };
 
 app.set("view engine","ejs");
@@ -41,8 +47,21 @@ app.use(methodOverride("_method")); // to use PUT request
 app.engine('ejs', ejsMate); //To use ejs-mate
 app.use(express.static(path.join(__dirname,"/public"))); //To use static files (css files)
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: { // used for encryption
+        secret: process.env.SECRET,
+    },
+    touchAfter: 24 * 3600, //if no change happens in session within 24 hrs, we keep the session remembered
+});
+
+store.on("error", () => { //if the error happens in mongo-session store
+    console.log("Mongo Session Error", err);
+});
+
 const sessionOptions = { //these are the session options
-    secret: "mysupersecretcode",
+    store, // above store (MongoStore)
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie:{
@@ -52,10 +71,12 @@ const sessionOptions = { //these are the session options
     }
 };
 
-app.get("/",(req,res) => {
-    res.send("Root")
-    console.log("root is working");
-});
+// app.get("/",(req,res) => {
+//     res.send("Root")
+//     console.log("root is working");
+// });
+
+
 
 app.use(session(sessionOptions)); //we use those session options over here
 app.use(flash()); // Using flash package here

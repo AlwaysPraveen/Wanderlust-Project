@@ -4,7 +4,7 @@
     <div class="col-8 offset-2"> <!-- As the entire body becomes single row,we are dividing that row into 8 columns(so that the form width decreases)-->
         <!--& adding offset-2 because the form should move 2 rows from left.So that form settle in the Middle -->
         <h3> Create a New listing</h3>
-        <form method = "POST" action = "/listings" novalidate class="needs-validation">
+        <form method = "POST" action = "/listings" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class = "mb-3">
                 <label for = "title" class = "form-label">Title</label>
                 <input name = "listing[title]" placeholder="Add a catchy Title" type = "text" class = "form-control" required>
@@ -17,8 +17,8 @@
                 <div class = "invalid-feedback">Please add short description</div> <!-- This is bootstrap class, It displays on invalid feedback-->
             </div>
             <div class = "mb-3">
-                <label for = "image" class = "form-label">Image Link</label>
-                <input name = "listing[image]" placeholder="enter image/URL" type = "text" class = "form-control" >
+                <label for = "image" class = "form-label">Upload Image Listing</label>
+                <input name = "listing[image]"  type = "file" class = "form-control" required>
             </div>
             <div class="row"> <!-- We adding price & Country in a single row-->
                 <div class = "mb-3 col-md-4">
